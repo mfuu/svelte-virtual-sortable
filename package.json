@@ -1,0 +1,80 @@
+{
+  "name": "svelte-virtual-sortable",
+  "version": "5.0.0",
+  "description": "A virtual scrolling list component that can be sorted by dragging",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build && npm run prepack",
+    "preview": "vite preview",
+    "prepare": "svelte-kit sync || echo ''",
+    "prepack": "svelte-kit sync && svelte-package && publint",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "format": "prettier --write .",
+    "core:update": "git submodule update --remote"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mfuu/svelte-virtual-sortable.git"
+  },
+  "keywords": [
+    "svelte",
+    "sort",
+    "drag",
+    "drop",
+    "draggable",
+    "sortable",
+    "virtual",
+    "virtual-list",
+    "virtual-scroll",
+    "big-data",
+    "big-list",
+    "infinite"
+  ],
+  "author": "mfuu",
+  "license": "MIT",
+  "private": false,
+  "bugs": {
+    "url": "https://github.com/mfuu/svelte-virtual-sortable/issues"
+  },
+  "homepage": "https://github.com/mfuu/svelte-virtual-sortable#readme",
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js"
+    }
+  },
+  "peerDependencies": {
+    "svelte": ">=5.0.0"
+  },
+  "dependencies": {
+    "sortable-dnd": "^0.7.1"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^7.0.0",
+    "@sveltejs/kit": "^2.49.1",
+    "@sveltejs/package": "^2.5.7",
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "@types/node": "^20",
+    "globals": "^16.5.0",
+    "mockjs": "^1.1.0",
+    "prettier": "^3.7.4",
+    "prettier-plugin-svelte": "^3.4.0",
+    "publint": "^0.3.15",
+    "svelte": "^5.45.6",
+    "svelte-check": "^4.3.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.6"
+  }
+}
