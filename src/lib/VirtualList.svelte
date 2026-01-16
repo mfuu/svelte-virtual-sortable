@@ -17,6 +17,7 @@
   import Item from './Item.svelte';
   import { Previous } from './previous.svelte';
   import { cssStringify } from './utils';
+  import Tr from './Tr.svelte';
 
   let {
     dataKey = '',
@@ -356,6 +357,12 @@
   // ========================================== layout ==========================================
   const renderItems = $derived(dataSource.slice(range.start, range.end + 1));
 
+  const { itemElTag, wrapElTag, rootElTag } = $derived({
+    itemElTag: tableMode ? 'tr' : itemTag,
+    wrapElTag: tableMode ? 'tbody' : wrapTag,
+    rootElTag: tableMode ? 'table' : rootTag,
+  });
+
   const { rootElStyle, wrapElStyle } = $derived.by(() => {
     const { front, behind } = range;
     const isHorizontal = direction === 'horizontal';
@@ -374,7 +381,7 @@
 </script>
 
 <svelte:element
-  this={rootTag}
+  this={rootElTag}
   bind:this={rootElRef}
   style={cssStringify(rootElStyle)}
   class={className}
@@ -384,14 +391,17 @@
   {/if}
 
   <svelte:element
-    this={wrapTag}
+    this={wrapElTag}
     bind:this={wrapElRef}
     class={wrapClass}
     style={cssStringify(wrapElStyle)}
   >
+    {#if tableMode}
+      <Tr offset={range.front} {direction} />
+    {/if}
     {#each renderItems as item, index (getDataKey(item, dataKey))}
       <Item
-        tag={itemTag}
+        tag={itemElTag}
         style={itemStyle}
         className={itemClass}
         dataKey={getDataKey(item, dataKey)}
@@ -406,6 +416,9 @@
         })}
       </Item>
     {/each}
+    {#if tableMode}
+      <Tr offset={range.behind} {direction} />
+    {/if}
   </svelte:element>
 
   {#if footerSnippet}
