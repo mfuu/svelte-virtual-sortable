@@ -1,17 +1,24 @@
 import Mock from 'mockjs';
 
+export interface DataItem {
+  index: number;
+  name: string;
+  id: string;
+  desc: string;
+}
+
 export function getPageData(count, currentLength) {
-  const DataItems = [];
+  const items: DataItem[] = [];
   for (let i = 0; i < count; i++) {
     const index = currentLength + i;
-    DataItems.push({
+    items.push({
       index,
       name: Mock.Random.name(),
       id: getUniqueId(index),
       desc: getSentences(),
     });
   }
-  return DataItems;
+  return items;
 }
 
 function getSentences(min = 1, max = 6) {

@@ -25,22 +25,29 @@ Root component:
   }
 </script>
 
-<div class="vs">
-  <VirtualList
-    dataSource={items}
-    dataKey="id"
-    handle=".handle"
-    style={{ height: '500px' }}
-    itemClass="list-item"
-    onDrop={onDrop}
-  >
-    {#snippet item({ item, index, key })}
-      <span class="handle">☰</span>
-      <p>{item.desc}</p>
-    {/snippet}
-  </VirtualList>
-</div>
+<VirtualList
+  dataSource={items}
+  dataKey="id"
+  handle=".handle"
+  style={{ height: '500px' }}
+  onDrop={onDrop}
+>
+  {#snippet item({ item, index, key })}
+    <span class="handle">☰</span>
+    <p>{item.desc}</p>
+  {/snippet}
+</VirtualList>
 ```
+
+## Snippets
+
+* item - Snippet for each item in the list
+  * Parameters
+    * `item` - The item data
+    * `index` - The index of the item
+    * `key` - The unique identifier of the item
+* header - Snippet for the elements that should appear at the top of the list
+* footer - Snippet for the elements that should appear at the bottom of the list
 
 ## Props
 
@@ -64,9 +71,6 @@ Root component:
 
 | **Prop**       | **Type**                  | **Default** | **Description**                                                                                                  |
 | -------------- | ------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
-| `item`         | `Snippet`                 | -           | Render each item                                                                                                 |
-| `header`       | `Snippet`                 | -           | Top of list                                                                                                      |
-| `footer`       | `Snippet`                 | -           | Bottom of list                                                                                                   |
 | `size`         | `Number`                  | -           | Estimated height of each row. it will be automatically calculated                                                |
 | `keeps`        | `Number`                  | `30`        | The number of lines rendered by the virtual scroll                                                               |
 | `handle`       | `String`                  | -           | Drag handle selector within list items                                                                           |
@@ -119,3 +123,26 @@ Root component:
 | `scrollToKey(key, align)`     | scroll to the specified data-key                           |
 | `scrollToIndex(index, align)` | scroll to the specified index value                        |
 | `scrollToOffset(offset)`      | scroll to the specified height                             |
+
+**Sample Usage**
+
+```svelte
+<script>
+	...
+
+	let virtualList;
+
+	function scrollToBottom() {
+		virtualList.scrollToBottom();
+	}
+</script>
+
+<button onclick={scrollToBottom}>Scroll to Bottom</button>
+
+<VirtualList
+	bind:this={virtualList}
+	...
+>
+	...
+</VirtualList>
+```
