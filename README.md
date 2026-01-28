@@ -1,6 +1,6 @@
 # svelte-virtual-sortable
 
-[![npm](https://img.shields.io/npm/v/svelte-virtual-sortable.svg)](https://www.npmjs.com/package/svelte-virtual-sortable)  [![npm](https://img.shields.io/npm/dm/svelte-virtual-sortable.svg)](https://www.npmjs.com/package/svelte-virtual-sortable)  [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
+[![npm](https://img.shields.io/npm/v/svelte-virtual-sortable.svg)](https://www.npmjs.com/package/svelte-virtual-sortable) [![npm](https://img.shields.io/npm/dm/svelte-virtual-sortable.svg)](https://www.npmjs.com/package/svelte-virtual-sortable) [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
 A virtual scrolling list component that can be sorted by dragging
 
@@ -13,6 +13,7 @@ npm i svelte-virtual-sortable
 ```
 
 Root component:
+
 ```svelte
 <script>
   import VirtualList from 'svelte-virtual-sortable';
@@ -25,13 +26,7 @@ Root component:
   }
 </script>
 
-<VirtualList
-  dataSource={items}
-  dataKey="id"
-  handle=".handle"
-  style={{ height: '500px' }}
-  onDrop={onDrop}
->
+<VirtualList dataSource={items} dataKey="id" handle=".handle" style={{ height: '500px' }} {onDrop}>
   {#snippet item({ item, index, key })}
     <span class="handle">☰</span>
     <p>{item.desc}</p>
@@ -41,13 +36,13 @@ Root component:
 
 ## Snippets
 
-* item - Snippet for each item in the list
-  * Parameters
-    * `item` - The item data
-    * `index` - The index of the item
-    * `key` - The unique identifier of the item
-* header - Snippet for the elements that should appear at the top of the list
-* footer - Snippet for the elements that should appear at the bottom of the list
+- item - Snippet for each item in the list
+  - Parameters
+    - `item` - The item data
+    - `index` - The index of the item
+    - `key` - The unique identifier of the item
+- header - Snippet for the elements that should appear at the top of the list
+- footer - Snippet for the elements that should appear at the bottom of the list
 
 ## Props
 
@@ -62,6 +57,7 @@ Root component:
 | `onRangeChange` | `Function` | Range of visible items has changed      |
 
 **Required props**
+
 | **Prop**     | **Type** | **Default** | **Description**                                                       |
 | ------------ | -------- | ----------- | --------------------------------------------------------------------- |
 | `dataKey`    | `String` | -           | The unique identifier of each piece of data, in the form of `'a.b.c'` |
@@ -128,21 +124,16 @@ Root component:
 
 ```svelte
 <script>
-	...
+ ...
 
-	let virtualList;
+ let virtualList;
 
-	function scrollToBottom() {
-		virtualList.scrollToBottom();
-	}
+ function scrollToBottom() {
+  virtualList.scrollToBottom();
+ }
 </script>
 
 <button onclick={scrollToBottom}>Scroll to Bottom</button>
 
-<VirtualList
-	bind:this={virtualList}
-	...
->
-	...
-</VirtualList>
+<VirtualList bind:this={virtualList} ...>...</VirtualList>
 ```

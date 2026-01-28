@@ -3,7 +3,7 @@
 ## Installation
 
 ```sh [npm]
-$ npm i svelte-virtual-sortable
+npm i svelte-virtual-sortable
 ```
 
 ## Simple Usage

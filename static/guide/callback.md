@@ -38,7 +38,6 @@ const {
 } = dropEvent
 ```
 
-
 ## `onRangeChange`
 
 ```ts

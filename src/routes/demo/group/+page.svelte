@@ -9,7 +9,6 @@
         <span class="index">#{item.index}</span>
         <span class="handle">☰</span>
       </div>
-      <p>{item.desc}</p>
     {/snippet}
   </VirtualList>
 
@@ -19,7 +18,6 @@
         <span class="index">#{item.index}</span>
         <span class="handle">☰</span>
       </div>
-      <p>{item.desc}</p>
     {/snippet}
   </VirtualList>
 </div>

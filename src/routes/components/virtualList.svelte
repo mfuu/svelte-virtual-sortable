@@ -1,32 +1,15 @@
 <script lang="ts">
-  import { onMount, type Snippet } from 'svelte';
+  import { onMount } from 'svelte';
   import { getPageData, type DataItem } from '../sentence';
-  import type { DropEvent, KeyValueType } from '$lib/types';
-  import type { Group } from 'sortable-dnd';
+  import type { DropEvent, VirtualProps } from '$lib/types';
 
   let {
-    group,
-    style,
-    className,
-    wrapClass,
     itemClass,
-    direction,
-    tableMode,
     item: itemSnippet,
     header: headerSnippet,
     footer: footerSnippet,
-  }: {
-    style?: Record<string, string>;
-    className?: string;
-    wrapClass?: string;
-    itemClass?: string;
-    direction?: 'vertical' | 'horizontal';
-    tableMode?: boolean;
-    group?: string | Group;
-    item: Snippet<[{ item: DataItem; index: number; key: KeyValueType }]>;
-    header?: Snippet;
-    footer?: Snippet;
-  } = $props();
+    ...restProps
+  }: Partial<VirtualProps<DataItem>> = $props();
 
   let mounted = $state(false);
   let VirtualList = $state(null);
@@ -52,12 +35,7 @@
     handle=".handle"
     itemClass={itemClass || 'list-item'}
     chosenClass="chosen"
-    {direction}
-    {className}
-    {wrapClass}
-    {tableMode}
-    {group}
-    {style}
+    {...restProps}
     {onDrop}
   >
     {#snippet header()}
