@@ -26,6 +26,7 @@
 
     size = undefined,
     keeps = 30,
+    buffer = undefined,
     scroller = undefined,
     direction = 'vertical',
     debounceTime = 0,
@@ -215,6 +216,7 @@
     // virtual attrs
     size,
     keeps,
+    buffer,
     scroller,
     direction,
     debounceTime,
@@ -265,7 +267,6 @@
 
     VS = new VirtualSortable<KeyValueType>(rootElRef, {
       ...options,
-      buffer: Math.round(keeps / 3),
       wrapper: wrapElRef,
       scroller: scroller || rootElRef,
       uniqueKeys: uniqueKeys,

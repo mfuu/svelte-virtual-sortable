@@ -1,6 +1,6 @@
 {
   "name": "svelte-virtual-sortable",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "A virtual scrolling list component that can be sorted by dragging",
   "scripts": {
     "dev": "vite dev",

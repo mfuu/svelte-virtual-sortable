@@ -30,8 +30,9 @@ export interface VirtualProps<T> {
   dataKey: string;
   dataSource: T[];
 
-  keeps?: number;
   size?: number;
+  keeps?: number;
+  buffer?: number;
   group?: Group | string;
   handle?: string;
   lockAxis?: 'x' | 'y';
