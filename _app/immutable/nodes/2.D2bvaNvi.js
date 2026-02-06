@@ -1,0 +1,1 @@
+import"../chunks/DsnmJJEf.js";import"../chunks/C7IaWd5V.js";import{p as r,o as t,a as p}from"../chunks/DDBlrmHI.js";import{i as a}from"../chunks/zyE5KyD6.js";import{g as i}from"../chunks/DWTbwpWH.js";import{r as m}from"../chunks/C5Urh6VM.js";function h(s,o){r(o,!1),t(()=>{i(m("/guide/start"))}),a(),p()}export{h as component};
