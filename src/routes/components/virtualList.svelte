@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { getPageData, type DataItem } from '../sentence';
-  import type { DropEvent, VirtualProps } from '$lib/types';
+  import type { DropEvent, VirtualListProps } from '$lib/types';
 
   let {
     itemClass,
@@ -9,7 +9,7 @@
     header: headerSnippet,
     footer: footerSnippet,
     ...restProps
-  }: Partial<VirtualProps<DataItem>> = $props();
+  }: Partial<VirtualListProps<DataItem>> = $props();
 
   let mounted = $state(false);
   let VirtualList = $state(null);

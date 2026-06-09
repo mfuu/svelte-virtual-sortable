@@ -13,7 +13,7 @@
     type Range,
     type ScrollEvent,
   } from './core';
-  import type { EventType, KeyValueType, VirtualProps } from './types.d.ts';
+  import type { EventType, KeyValueType, VirtualListProps } from './types.d.ts';
   import Item from './Item.svelte';
   import { Previous } from './previous.svelte';
   import { cssStringify } from './utils';
@@ -68,7 +68,7 @@
     footer: footerSnippet,
 
     ...restProps
-  }: VirtualProps<T> = $props();
+  }: VirtualListProps<T> = $props();
 
   let VS: VirtualSortable<KeyValueType>;
   let range: Range = $state({ start: 0, end: 0, front: 0, behind: 0 });
@@ -203,8 +203,8 @@
   }
 
   const dispatchEvent = (
-    name: keyof VirtualProps<T> & EventType,
-    ...args: Parameters<NonNullable<VirtualProps<T>[keyof VirtualProps<T> & EventType]>>
+    name: keyof VirtualListProps<T> & EventType,
+    ...args: Parameters<NonNullable<VirtualListProps<T>[keyof VirtualListProps<T> & EventType]>>
   ) => {
     const handler = restProps[name];
     handler && handler.apply(null, args);
@@ -271,10 +271,10 @@
       scroller: scroller || rootElRef,
       uniqueKeys: uniqueKeys,
       ghostContainer: wrapElRef,
-      onDrag: (event) => onDrag(event),
-      onDrop: (event) => onDrop(event),
-      onScroll: (event) => onScroll(event),
-      onUpdate: (range, changed) => onUpdate(range, changed),
+      onDrag: (event) => handleDrag(event),
+      onDrop: (event) => handleDrop(event),
+      onScroll: (event) => handleScroll(event),
+      onUpdate: (range, changed) => handleUpdate(range, changed),
     });
   }
 
@@ -287,7 +287,9 @@
     dispatchEvent('onBottom');
   }, 50);
 
-  function onScroll(event: ScrollEvent) {
+  function handleScroll(event: ScrollEvent) {
+    dispatchEvent('onScroll', event);
+
     listLengthWhenTopLoading = 0;
     if (event.top) {
       handleToTop();
@@ -296,7 +298,7 @@
     }
   }
 
-  function onUpdate(newRange: Range, changed: boolean) {
+  function handleUpdate(newRange: Range, changed: boolean) {
     range = newRange;
 
     changed && dispatchEvent('onRangeChange', range);
@@ -316,7 +318,7 @@
     }
   }
 
-  const onDrag = (event: DragEvent<KeyValueType>) => {
+  const handleDrag = (event: DragEvent<KeyValueType>) => {
     const { key, index } = event;
     const item = dataSource[index];
 
@@ -331,7 +333,7 @@
     dispatchEvent('onDrag', { ...event, item });
   };
 
-  const onDrop = (event: DropEvent<KeyValueType>) => {
+  const handleDrop = (event: DropEvent<KeyValueType>) => {
     const item = (window as any).draggingItem;
     const { oldIndex, newIndex } = event;
 

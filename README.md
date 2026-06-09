@@ -52,6 +52,7 @@ Root component:
 | --------------- | ---------- | --------------------------------------- |
 | `onTop`         | `Function` | Scrolling to the top of the scroller    |
 | `onBottom`      | `Function` | Scrolling to the bottom of the scroller |
+| `onScroll`      | `Function` | Scroll event                            |
 | `onDrag`        | `Function` | Drag is started                         |
 | `onDrop`        | `Function` | Drag is complete                        |
 | `onRangeChange` | `Function` | Range of visible items has changed      |

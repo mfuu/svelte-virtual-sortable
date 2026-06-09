@@ -2,9 +2,9 @@
   import { onDestroy, onMount } from 'svelte';
   import { cssStringify } from './utils.js';
   import { isEqual } from './core/utils.js';
-  import type { ItemProps } from './types.d.ts';
+  import type { ListItemProps } from './types.d.ts';
 
-  let { tag, style, className, horizontal, dataKey, dragging, onResize, children }: ItemProps =
+  let { tag, style, className, horizontal, dataKey, dragging, onResize, children }: ListItemProps =
     $props();
 
   let itemRef: HTMLElement | null;

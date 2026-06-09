@@ -1,12 +1,12 @@
 import type { Group, ScrollSpeed, SortableEvent } from 'sortable-dnd';
-import type { Range } from './core';
+import type { Range, ScrollEvent } from './core';
 import type { Snippet } from 'svelte';
 
 export type Getter<T> = () => T;
 
 export type KeyValueType = string | number;
 
-export type EventType = 'onTop' | 'onBottom' | 'onDrag' | 'onDrop' | 'onRangeChange';
+export type EventType = 'onTop' | 'onBottom' | 'onScroll' | 'onDrag' | 'onDrop' | 'onRangeChange';
 
 export interface DragEvent<T> {
   key: KeyValueType;
@@ -26,7 +26,7 @@ export interface DropEvent<T> {
   newIndex: number;
 }
 
-export interface VirtualProps<T> {
+export interface VirtualListProps<T> {
   dataKey: string;
   dataSource: T[];
 
@@ -76,12 +76,13 @@ export interface VirtualProps<T> {
 
   onTop?: () => void;
   onBottom?: () => void;
+  onScroll?: (event: ScrollEvent) => void;
   onDrag?: (event: DragEvent<T>) => void;
   onDrop?: (event: DropEvent<T>) => void;
   onRangeChange?: (range: Range) => void;
 }
 
-export interface ItemProps {
+export interface ListItemProps {
   tag: string;
   style: Partial<CSSStyleDeclaration>;
   className: string;
