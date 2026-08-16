@@ -15,7 +15,6 @@ npm i svelte-virtual-sortable
   let items = [{id: '1', text: 'a'}, {id: '2', text: 'b'}, ...];
 
   function onDrop(event) {
-    console.log('onDrop', event);
     items = event.list;
   }
 </script>
@@ -29,7 +28,7 @@ npm i svelte-virtual-sortable
 >
   {#snippet item({ item, index, key })}
     <span class="handle">☰</span>
-    <p>{item.desc}</p>
+    <p>{item.text}</p>
   {/snippet}
 </VirtualList>
 ```
