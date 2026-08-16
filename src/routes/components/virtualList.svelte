@@ -11,6 +11,7 @@
     ...restProps
   }: Partial<VirtualListProps<DataItem>> = $props();
 
+  let context = $state(null);
   let mounted = $state(false);
   let VirtualList = $state(null);
 
@@ -23,13 +24,17 @@
   let items = $state(getPageData(1000, 0));
 
   function onDrop(event: DropEvent<DataItem>) {
-    console.log('onDrop', event);
     items = event.list;
+  }
+
+  export function dispatchEvent(event, ...args) {
+    context[event](...args);
   }
 </script>
 
 {#if mounted}
   <VirtualList
+    bind:this={context}
     dataSource={items}
     dataKey="id"
     handle=".handle"

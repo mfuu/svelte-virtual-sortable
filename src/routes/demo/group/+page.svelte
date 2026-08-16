@@ -43,5 +43,6 @@
   :global(.group-virtual-list) {
     width: 49%;
     height: 100%;
+    padding: 5px;
   }
 </style>

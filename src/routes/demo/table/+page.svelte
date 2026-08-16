@@ -26,6 +26,7 @@
   :global(.table-virtual-list) {
     height: 60vh;
     font-size: 14px;
+    padding: 0 5px;
   }
 
   .index {

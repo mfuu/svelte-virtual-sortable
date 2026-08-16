@@ -4,7 +4,7 @@ import type { Snippet } from 'svelte';
 
 export type Getter<T> = () => T;
 
-export type KeyValueType = string | number;
+export type KeyValueType = any;
 
 export type EventType = 'onTop' | 'onBottom' | 'onScroll' | 'onDrag' | 'onDrop' | 'onRangeChange';
 
@@ -27,7 +27,7 @@ export interface DropEvent<T> {
 }
 
 export interface VirtualListProps<T> {
-  dataKey: string;
+  dataKey?: string | ((item: T) => KeyValueType);
   dataSource: T[];
 
   size?: number;
@@ -86,8 +86,8 @@ export interface ListItemProps {
   tag: string;
   style: Partial<CSSStyleDeclaration>;
   className: string;
-  horizontal: boolean;
-  dataKey: KeyValueType;
+  isHorizontal: boolean;
+  itemKey: KeyValueType;
   dragging: KeyValueType;
   onResize: (key: KeyValueType, size: number) => void;
   children?: Snippet;

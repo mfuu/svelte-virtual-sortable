@@ -4,14 +4,22 @@
   import { isEqual } from './core/utils.js';
   import type { ListItemProps } from './types.d.ts';
 
-  let { tag, style, className, horizontal, dataKey, dragging, onResize, children }: ListItemProps =
-    $props();
+  let {
+    tag,
+    style,
+    className,
+    isHorizontal,
+    itemKey,
+    dragging,
+    onResize,
+    children,
+  }: ListItemProps = $props();
 
   let itemRef: HTMLElement | null;
   let observer: ResizeObserver | null;
 
   const itemStyle = $derived.by(() => {
-    const isDragging = isEqual(dragging, dataKey);
+    const isDragging = isEqual(dragging, itemKey);
     return { ...style, display: isDragging ? 'none' : '' };
   });
 
@@ -20,9 +28,9 @@
 
     if (typeof ResizeObserver !== undefined) {
       observer = new ResizeObserver(() => {
-        const sizeKey = horizontal ? 'offsetWidth' : 'offsetHeight';
+        const sizeKey = isHorizontal ? 'offsetWidth' : 'offsetHeight';
         const size = itemRef[sizeKey];
-        onResize(dataKey, size);
+        onResize(itemKey, size);
       });
       itemRef && observer?.observe(itemRef);
     }
@@ -41,7 +49,7 @@
   bind:this={itemRef}
   style={cssStringify(itemStyle)}
   class={className}
-  data-key={dataKey}
+  data-key={itemKey}
 >
   {@render children?.()}
 </svelte:element>

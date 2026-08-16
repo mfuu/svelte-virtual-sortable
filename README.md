@@ -21,15 +21,20 @@ Root component:
   let items = [{id: '1', text: 'a'}, {id: '2', text: 'b'}, ...];
 
   function onDrop(event) {
-    console.log('onDrop', event);
     items = event.list;
   }
 </script>
 
-<VirtualList dataSource={items} dataKey="id" handle=".handle" style={{ height: '500px' }} {onDrop}>
+<VirtualList
+  dataSource={items}
+  dataKey="id"
+  handle=".handle"
+  style={{ height: '500px' }}
+  onDrop={onDrop}
+>
   {#snippet item({ item, index, key })}
     <span class="handle">☰</span>
-    <p>{item.desc}</p>
+    <p>{item.text}</p>
   {/snippet}
 </VirtualList>
 ```
@@ -59,24 +64,24 @@ Root component:
 
 **Required props**
 
-| **Prop**     | **Type** | **Default** | **Description**                                                       |
-| ------------ | -------- | ----------- | --------------------------------------------------------------------- |
-| `dataKey`    | `String` | -           | The unique identifier of each piece of data, in the form of `'a.b.c'` |
-| `dataSource` | `Array`  | `[]`        | The data that needs to be rendered                                    |
+| **Prop**     | **Type**              | **Default** | **Description**                             |
+| ------------ | --------------------- | ----------- | ------------------------------------------- |
+| `dataKey`    | `String` / `Function` | -           | The unique identifier of each piece of data |
+| `dataSource` | `Array`               | `[]`        | The data that needs to be rendered          |
 
 **Common used**
 
-| **Prop**       | **Type**                  | **Default** | **Description**                                                                                                  |
-| -------------- | ------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
-| `size`         | `Number`                  | -           | Estimated height of each row. it will be automatically calculated                                                |
-| `keeps`        | `Number`                  | `30`        | The number of lines rendered by the virtual scroll                                                               |
-| `handle`       | `String`                  | -           | Drag handle selector within list items                                                                           |
-| `group`        | `Object/String`           | -           | string: 'name' or object: `{ name: 'group', put: true/false, pull: true/false/'clone', revertDrag: true/false }` |
-| `scroller`     | `Document \| HTMLElement` | -           | Virtual list scrolling element                                                                                   |
-| `direction`    | `vertical \| horizontal`  | `vertical`  | Scroll direction                                                                                                 |
-| `debounceTime` | `Number`                  | `0`         | debounce time on scroll                                                                                          |
-| `throttleTime` | `Number`                  | `0`         | debounce time on scroll                                                                                          |
-| `tableMode`    | `Boolean`                 | `false`     | display with table and tbody                                                                                     |
+| **Prop**       | **Type**                  | **Default** | **Description**                                                   |
+| -------------- | ------------------------- | ----------- | ----------------------------------------------------------------- |
+| `size`         | `Number`                  | -           | Estimated height of each row. it will be automatically calculated |
+| `keeps`        | `Number`                  | `30`        | The number of lines rendered by the virtual scroll                |
+| `handle`       | `String`                  | -           | Drag handle selector within list items                            |
+| `group`        | `Object/String`           | -           | Drag between groups with the same group name                      |
+| `scroller`     | `Document \| HTMLElement` | -           | Virtual list scrolling element                                    |
+| `direction`    | `vertical \| horizontal`  | `vertical`  | Scroll direction                                                  |
+| `debounceTime` | `Number`                  | `0`         | debounce time on scroll                                           |
+| `throttleTime` | `Number`                  | `0`         | debounce time on scroll                                           |
+| `tableMode`    | `Boolean`                 | `false`     | display with table and tbody                                      |
 
 **Uncommonly used**
 

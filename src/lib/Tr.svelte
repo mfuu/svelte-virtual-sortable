@@ -1,10 +1,10 @@
 <script lang="ts">
   import { cssStringify } from './utils.js';
 
-  let { offset, direction }: { offset: number; direction: 'horizontal' | 'vertical' } = $props();
+  let { offset, isHorizontal }: { offset: number; isHorizontal: boolean } = $props();
 
   let style = $derived.by(() => {
-    const offsetKey = direction === 'horizontal' ? 'width' : 'height';
+    const offsetKey = isHorizontal ? 'width' : 'height';
     return {
       padding: '0',
       border: '0',

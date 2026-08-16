@@ -1,23 +1,24 @@
 <script lang="ts" generics="T">
   import { onDestroy, onMount, untrack } from 'svelte';
+  import Sortable from 'sortable-dnd';
   import {
+    CoreService,
     debounce,
     getDataKey,
     isEqual,
     SortableAttrs,
     VirtualAttrs,
-    VirtualSortable,
+    type CoreOptions,
     type DragEvent,
     type DropEvent,
-    type Options,
     type Range,
     type ScrollEvent,
   } from './core';
   import type { EventType, KeyValueType, VirtualListProps } from './types.d.ts';
+  import Tr from './Tr.svelte';
   import Item from './Item.svelte';
   import { Previous } from './previous.svelte';
   import { cssStringify } from './utils';
-  import Tr from './Tr.svelte';
 
   let {
     dataKey = '',
@@ -70,8 +71,9 @@
     ...restProps
   }: VirtualListProps<T> = $props();
 
-  let VS: VirtualSortable<KeyValueType>;
+  let core: CoreService<KeyValueType>;
   let range: Range = $state({ start: 0, end: 0, front: 0, behind: 0 });
+  let dragging: KeyValueType = $state('');
 
   let rootElRef: HTMLElement;
   let wrapElRef: HTMLElement;
@@ -80,41 +82,41 @@
    * Get item size by data-key
    */
   export function getSize(key: KeyValueType) {
-    return VS.call('getSize', key);
+    return core.virtual.getSize(key);
   }
 
   /**
    * Get current scroll offset
    */
   export function getOffset() {
-    return VS.call('getOffset');
+    return core.virtual.getOffset();
   }
   /**
    * Get client viewport size
    */
   export function getClientSize() {
-    return VS.call('getClientSize');
+    return core.virtual.getClientSize();
   }
 
   /**
    * Get scroll size
    */
   export function getScrollSize() {
-    return VS.call('getScrollSize');
+    return core.virtual.getScrollSize();
   }
 
   /**
    * Scroll to the specified offset
    */
   export function scrollToOffset(offset: number) {
-    VS.call('scrollToOffset', offset);
+    core.virtual.scrollToOffset(offset);
   }
 
   /**
    * Scroll to the specified index position
    */
   export function scrollToIndex(index: number, align?: 'top' | 'bottom' | 'auto') {
-    VS.call('scrollToIndex', index, align);
+    core.virtual.scrollToIndex(index, align);
   }
 
   /**
@@ -123,7 +125,7 @@
   export function scrollToKey(key: KeyValueType, align?: 'top' | 'bottom' | 'auto') {
     const index = uniqueKeys.indexOf(key);
     if (index > -1) {
-      VS.call('scrollToIndex', index, align);
+      core.virtual.scrollToIndex(index, align);
     }
   }
 
@@ -131,14 +133,14 @@
    * Scroll to top of list
    */
   export function scrollToTop() {
-    VS.call('scrollToOffset', 0);
+    core.virtual.scrollToOffset(0);
   }
 
   /**
    * Scroll to bottom of list
    */
   export function scrollToBottom() {
-    VS.call('scrollToBottom');
+    core.virtual.scrollToBottom();
   }
 
   // ========================================== data update ==========================================
@@ -154,7 +156,7 @@
   });
 
   onDestroy(() => {
-    VS?.destroy();
+    core?.destroy();
   });
 
   $effect(() => {
@@ -171,7 +173,7 @@
     if (listLengthWhenTopLoading && keepOffset) {
       const index = dataSource.length - listLengthWhenTopLoading;
       if (index > 0) {
-        VS?.call('scrollToIndex', index);
+        core?.virtual.scrollToIndex(index);
       }
       listLengthWhenTopLoading = 0;
     }
@@ -179,9 +181,24 @@
     lastListLength = dataSource.length;
   }
 
+  function getItemKey(item: T) {
+    if (typeof dataKey === 'function') {
+      return dataKey(item);
+    }
+
+    return getDataKey(item, dataKey);
+  }
+
   function updateUniqueKeys() {
-    uniqueKeys = dataSource.map((item) => getDataKey(item, dataKey));
-    VS?.option('uniqueKeys', uniqueKeys);
+    const len = dataSource.length;
+    const keys = new Array(len);
+
+    for (let i = 0; i < len; i++) {
+      keys[i] = getItemKey(dataSource[i]);
+    }
+
+    uniqueKeys = keys;
+    core?.option('uniqueKeys', uniqueKeys);
   }
 
   function detectRangeChange(oldListLength: number, newListLength: number) {
@@ -194,12 +211,12 @@
       oldListLength > keeps &&
       newListLength > oldListLength &&
       newRange.end === oldListLength - 1 &&
-      VS?.call('isReachedBottom')
+      core?.virtual.isReachedBottom()
     ) {
       newRange.start++;
     }
 
-    VS?.call('updateRange', newRange);
+    core?.virtual.updateRange(newRange);
   }
 
   const dispatchEvent = (
@@ -211,8 +228,8 @@
   };
 
   // ========================================== virtual sortable ==========================================
-  let dragging: KeyValueType = $state('');
-  const attrs = $derived({
+  const coreAttrsKeys = [...SortableAttrs, ...VirtualAttrs];
+  const coreAttrs = $derived({
     // virtual attrs
     size,
     keeps,
@@ -241,31 +258,31 @@
     placeholderClass,
     dropOnAnimationEnd,
   });
-  const previousAttrs = new Previous(() => attrs);
+  const previousCoreAttrs = new Previous(() => coreAttrs);
 
   $effect(() => {
-    attrs;
+    coreAttrs;
 
-    untrack(() => updateVsAttrs());
+    untrack(() => updateCoreAttrs());
   });
 
-  function updateVsAttrs() {
-    if (!VS) return;
+  function updateCoreAttrs() {
+    if (!core) return;
 
-    [...SortableAttrs, ...VirtualAttrs].forEach((attr) => {
-      if (previousAttrs.current?.[attr] !== attrs[attr]) {
-        VS.option(attr as keyof Options<KeyValueType>, attrs[attr]);
+    coreAttrsKeys.forEach((attr) => {
+      if (previousCoreAttrs.current?.[attr] !== coreAttrs[attr]) {
+        core?.option(attr as keyof CoreOptions<KeyValueType>, coreAttrs[attr]);
       }
     });
   }
 
   function installVirtualSortable() {
-    const options = [...SortableAttrs, ...VirtualAttrs].reduce((acc, cur) => {
-      acc[cur] = attrs[cur];
+    const options = coreAttrsKeys.reduce((acc, cur) => {
+      acc[cur] = coreAttrs[cur];
       return acc;
-    }, {} as Options<KeyValueType>);
+    }, {} as CoreOptions<KeyValueType>);
 
-    VS = new VirtualSortable<KeyValueType>(rootElRef, {
+    core = new CoreService<KeyValueType>(rootElRef, {
       ...options,
       wrapper: wrapElRef,
       scroller: scroller || rootElRef,
@@ -306,35 +323,30 @@
 
   function onItemResized(key: KeyValueType, size: number) {
     // ignore changes for dragging element
-    if (isEqual(key, dragging) || !VS) {
+    if (isEqual(key, dragging) || !core) {
       return;
     }
 
-    const sizes = VS.virtual.sizes.size;
-    VS.call('updateItemSize', key, size);
+    const sizes = core?.virtual.sizes.size;
+    core?.virtual.updateItemSize(key, size);
 
     if (sizes === keeps - 1 && dataSource.length > keeps) {
-      VS.call('updateRange', range);
+      core?.virtual.updateRange(range);
     }
   }
 
-  const handleDrag = (event: DragEvent<KeyValueType>) => {
+  function handleDrag(event: DragEvent<KeyValueType>) {
     const { key, index } = event;
     const item = dataSource[index];
 
     dragging = key;
-    (window as any).draggingItem = item as any;
-
-    if (!sortable) {
-      VS?.call('enableScroll', false);
-      VS?.option('autoScroll', false);
-    }
+    Sortable.store.draggingItem = item as any;
 
     dispatchEvent('onDrag', { ...event, item });
-  };
+  }
 
-  const handleDrop = (event: DropEvent<KeyValueType>) => {
-    const item = (window as any).draggingItem;
+  function handleDrop(event: DropEvent<KeyValueType>) {
+    const item = Sortable.store.draggingItem;
     const { oldIndex, newIndex } = event;
 
     const oldList = [...dataSource];
@@ -349,16 +361,21 @@
       newList.splice(newIndex, 0, item);
     }
 
-    VS!.call('enableScroll', true);
-    VS!.option('autoScroll', autoScroll);
-
     dragging = '';
 
     dispatchEvent('onDrop', { ...event, item, list: newList, oldList });
-  };
+  }
 
   // ========================================== layout ==========================================
-  const renderItems = $derived(dataSource.slice(range.start, range.end + 1));
+  const isHorizontal = $derived(direction === 'horizontal');
+
+  const renderItems = $derived(
+    dataSource.slice(range.start, range.end + 1).map((item, i) => ({
+      item,
+      index: i + range.start,
+      key: getItemKey(item),
+    }))
+  );
 
   const { itemElTag, wrapElTag, rootElTag } = $derived({
     itemElTag: tableMode ? 'tr' : itemTag,
@@ -368,10 +385,9 @@
 
   const { rootElStyle, wrapElStyle } = $derived.by(() => {
     const { front, behind } = range;
-    const isHorizontal = direction === 'horizontal';
 
-    const overflow = isHorizontal ? 'auto hidden' : 'hidden auto';
     const padding = isHorizontal ? `0px ${behind}px 0px ${front}px` : `${front}px 0px ${behind}px`;
+    const overflow = isHorizontal ? 'auto hidden' : 'hidden auto';
 
     const rootElStyle = { ...style, overflow: tableMode || scroller ? '' : overflow };
     const wrapElStyle = { ...wrapStyle, padding: tableMode ? '' : padding };
@@ -400,27 +416,23 @@
     style={cssStringify(wrapElStyle)}
   >
     {#if tableMode}
-      <Tr offset={range.front} {direction} />
+      <Tr offset={range.front} {isHorizontal} />
     {/if}
-    {#each renderItems as item, index (getDataKey(item, dataKey))}
+    {#each renderItems as { item, index, key } (key)}
       <Item
         tag={itemElTag}
         style={itemStyle}
         className={itemClass}
-        dataKey={getDataKey(item, dataKey)}
+        itemKey={key}
         {dragging}
-        horizontal={direction === 'horizontal'}
+        {isHorizontal}
         onResize={onItemResized}
       >
-        {@render itemSnippet?.({
-          item,
-          index: index + range.start,
-          key: getDataKey(item, dataKey),
-        })}
+        {@render itemSnippet?.({ item, index, key })}
       </Item>
     {/each}
     {#if tableMode}
-      <Tr offset={range.behind} {direction} />
+      <Tr offset={range.behind} {isHorizontal} />
     {/if}
   </svelte:element>
 

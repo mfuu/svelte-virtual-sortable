@@ -22,6 +22,7 @@
       { label: 'Basic', value: 'basic', page: resolve('/demo/basic') },
       { label: 'Group', value: 'group', page: resolve('/demo/group') },
       { label: 'Horizontal', value: 'horizontal', page: resolve('/demo/horizontal') },
+      { label: 'ScrollTo', value: 'scrollto', page: resolve('/demo/scrollto') },
       { label: 'Table', value: 'table', page: resolve('/demo/table') },
     ],
   });
